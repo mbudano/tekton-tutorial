@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: picalc
+  name: picalc-deploy
   labels:
     app: picalc
 spec:
@@ -23,7 +23,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: picalc
+  name: picalc-service
   labels:
     app: picalc
 spec:
@@ -32,4 +32,19 @@ spec:
     targetPort: http-server
   selector:
     app: picalc
-  type: NodePort
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  labels:
+    app: picalc
+  name: picalc-ingress
+spec:
+  rules:
+  - host: picalc.cloud-team.sao01.containers.appdomain.cloud
+    http:
+      paths:
+      - backend:
+          serviceName: picalc
+          servicePort: 8080
+        path: /
