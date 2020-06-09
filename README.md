@@ -107,7 +107,7 @@ spec:
     description: git url to clone
     type: string
   - name: revision
-    description: git revision to checkout (branch, tag, sha, ref…)
+    description: git revision to checkout (branch, tag, sha, refï¿½)
     type: string
     default: master
   - name: submodules
@@ -803,6 +803,25 @@ to run the pipeline tasks.
 Tekton provides simple, easy-to-learn features for constructing CI/CD pipelines that run on Kubernetes.
 This tutorial covered the basics to get you started building your own pipelines.
 There are more features available and many more planned for upcoming releases.
+
+
+## Commands for copy & paste
+git clone https://github.com/mbudano/tekton-tutorial
+git checkout beta-update
+kubectl apply -f release.yml
+//TODO - Copy pull secret to this namespace
+kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "default-us-icr-io"}]}'
+kubectl apply -f tekton/tasks
+kubectl apply -f tekton/pipeline
+ibmcloud iam service-id-create tekton-registry -d 'service account for tekton to access registry'
+ibmcloud iam service-policy-create tekton-registry --roles Writer --service-name container-registry
+ibmcloud iam service-api-key-create tekton-registry-key tekton-registry
+kubectl create secret generic ibm-registry-secret --type="kubernetes.io/basic-auth" --from-literal=username=iamapikey --from-literal=password=<API-KEY>
+kubectl annotate secret ibm-registry-secret tekton.dev/docker-0=us.icr.io
+kubectl apply -f tekton/pipeline-account.yaml
+kubectl create -f tekton/nginx-pipeline-pvc.yaml
+kubectl create -f tekton/run/nginx-pipeline-run.yaml
+kubectl port-forward svc/nginx-service 8080:8080
 
 
 
